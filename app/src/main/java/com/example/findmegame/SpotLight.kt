@@ -3,7 +3,10 @@ package com.example.findmegame
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
+import java.util.*
+import kotlin.math.floor
 
 class SpotLight @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -20,6 +23,8 @@ class SpotLight @JvmOverloads constructor(
 
     private lateinit var bitmap: Bitmap
 
+    private val shaderMatrix = Matrix()
+
     private val bitmapAndroid = BitmapFactory.decodeResource(
         resources,
         R.drawable.android
@@ -31,7 +36,6 @@ class SpotLight @JvmOverloads constructor(
         val canvas = Canvas(bitmap)
         val shaderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-        // Draw a black rectangle.
         shaderPaint.color = Color.BLACK
         canvas.drawRect(0.0f, 0.0f, spotlight.width.toFloat(), spotlight.height.toFloat(), shaderPaint)
 
@@ -47,5 +51,26 @@ class SpotLight @JvmOverloads constructor(
 
         canvas?.drawColor(Color.CYAN)
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        shaderMatrix.setTranslate(event?.rawX ?: 0f, event?.rawY ?: 0f)
+        shader.setLocalMatrix(shaderMatrix)
+        invalidate()
+        return super.onTouchEvent(event)
+    }
+
+    private fun setupWinnerRect() {
+        androidBitmapX =
+            floor((Random().nextFloat() * (width - bitmapAndroid.width)).toDouble()).toFloat()
+        androidBitmapY =
+            floor((Random().nextFloat() * (height - bitmapAndroid.height)).toDouble()).toFloat()
+
+        winnerRect = RectF(
+            (androidBitmapX),
+            (androidBitmapY),
+            (androidBitmapX + bitmapAndroid.width),
+            (androidBitmapY + bitmapAndroid.height)
+        )
     }
 }
