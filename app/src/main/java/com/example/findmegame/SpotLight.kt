@@ -1,5 +1,6 @@
 package com.example.findmegame
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -51,13 +52,23 @@ class SpotLight @JvmOverloads constructor(
 
         canvas?.drawColor(Color.CYAN)
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+        canvas?.drawBitmap(bitmapAndroid, androidBitmapX, androidBitmapY, paint)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        shaderMatrix.setTranslate(event?.rawX ?: 0f, event?.rawY ?: 0f)
+        shaderMatrix.setTranslate(
+            (event?.x?.minus(spotlight.width / 2.0f) ?: 0f),
+            (event?.y?.minus(spotlight.width / 2.0f) ?: 0f)
+        )
         shader.setLocalMatrix(shaderMatrix)
         invalidate()
-        return super.onTouchEvent(event)
+        return true
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        setupWinnerRect()
     }
 
     private fun setupWinnerRect() {
