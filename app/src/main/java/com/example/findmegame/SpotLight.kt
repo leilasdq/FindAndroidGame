@@ -47,12 +47,19 @@ class SpotLight @JvmOverloads constructor(
         paint.shader = shader
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas?.drawColor(Color.CYAN)
-        canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
-        canvas?.drawBitmap(bitmapAndroid, androidBitmapX, androidBitmapY, paint)
+        canvas.drawColor(Color.WHITE)
+        canvas.drawBitmap(bitmapAndroid, androidBitmapX, androidBitmapY, paint)
+
+        if (!gameOver) {
+            if (shouldDrawSpotLight) {
+                canvas.drawRect(0.0f, 0.0f, width.toFloat(), height.toFloat(), paint)
+            } else {
+                canvas.drawColor(Color.BLACK)
+            }
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
