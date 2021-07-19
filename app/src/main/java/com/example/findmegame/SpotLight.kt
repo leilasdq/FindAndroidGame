@@ -57,6 +57,19 @@ class SpotLight @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                shouldDrawSpotLight = true
+                if (gameOver) {
+                    gameOver = false
+                    setupWinnerRect()
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                shouldDrawSpotLight = false
+                gameOver = winnerRect.contains(event.x, event.y)
+            }
+        }
         shaderMatrix.setTranslate(
             (event?.x?.minus(spotlight.width / 2.0f) ?: 0f),
             (event?.y?.minus(spotlight.width / 2.0f) ?: 0f)
